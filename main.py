@@ -1,4 +1,4 @@
-# main.py, Path: backend/app/src/main.py
+# main.py, Path: facw7x3-copygen-api/main.py
 
 import os
 import json
@@ -67,20 +67,20 @@ def generate():
         language_model = data.get("languageModel")
         print(f"Selected language model: {language_model}")
 
-        # Load the email prompt using the new function `load_email_prompt`
-        prompt = firestore_handler.load_email_prompt(db, selected_template)
-        print(f"Loaded email prompt: {prompt}")
-
         # Fetch the latest responses from Firestore using `get_latest_responses`
         responses = firestore_handler.get_latest_responses(db)
         print(f"Latest responses: {responses}")
+
+        # Load the email prompt using the new function `load_email_prompt`
+        prompt = firestore_handler.load_email_prompt(db, selected_template)
+        print(f"Loaded email prompt: {prompt}")
 
         # Load the system role prompt using the new function `load_system_role_prompt`
         system_role_prompt = firestore_handler.load_system_role_prompt(db)
         print(f"Loaded system role prompt: {system_role_prompt}")
 
-        # Create a context string based on the latest responses and system role prompt
-        context = firestore_handler.create_context_from_responses(responses, system_role_prompt)
+        # Create a context string based on the request data, system role prompt, and selected email template
+        context = firestore_handler.create_context(data, system_role_prompt, prompt)
         print(f"Created context: {context}")
     except Exception as e:
         print(e)

@@ -1,4 +1,4 @@
-# firestore_handler.py, Path: backend/app/src/firestore_handler.py
+# firestore_handler.py, Path: facw7x3-copygen-api/src/firestore_handler.py
 
 import datetime
 from google.cloud import firestore
@@ -36,13 +36,21 @@ def load_email_prompt(db, selected_template):
     }.get(selected_template)
     return doc.get(field_name)
 
-def create_context_from_responses(responses, system_role_prompt):
+def create_context(data, system_role_prompt, selected_template):
     # Initialize an empty context string
     context = ""
-    # Add the system role prompt to the context
-    context += system_role_prompt + "\n"
-    # Iterate over the responses and add them to the context
-    for response in responses:
-        # Add each response to the context (customize this based on your data structure)
-        context += response['response_text'] + "\n"
+
+    # Replace the placeholders with the corresponding values from the request data
+    context += system_role_prompt
+    context = context.replace("<<Answer to question 1>>", data['targetMarket'])
+    context = context.replace("<<Answer to question 2>>", data['problemToSolve'])
+    context = context.replace("<<Answer to question 3>>", data['dislikedSolutions'])
+    context = context.replace("<<Answer to question 4>>", data['uniqueSolution'])
+    context = context.replace("<<Answer to question 5>>", data['solutionMechanism'])
+    context = context.replace("<<Answer to question 6>>", data['credibility'])
+
+    # Add the separator and the selected email template to the context
+    context += "\nHere's the template:\n"
+    context += selected_template + "\n"
+
     return context

@@ -1,0 +1,82 @@
+/* styles.css */
+
+body {
+    background-color: #ffffff;
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 36px;
+    line-height: 1.2;
+    background-color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+#google-form {
+    width: 150%;
+    max-width: 900px;
+    height: 85vh;
+    border: 0px solid #ccc;
+    overflow: auto;
+    margin-bottom: 20px;
+}
+
+#google-form iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+label, select, button {
+    margin-bottom: 10px;
+}
+
+.dots {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.2;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.2;
+    }
+}
+
+#generated-copy {
+    max-width: 50%; /* Adjust the value to your preferred width */
+    margin: auto;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    text-align: left; /* Align the text to the left */
+}
+
+#copy-to-clipboard-btn {
+    display: block;
+    margin: 20px auto 0;
+}
+
+h1 {
+    font-weight: 700;
+    font-size: 42px;
+    line-height: 1.1; /* reduce the line-height */
+}

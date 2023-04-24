@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Generated Email Copies</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <h1>Generated Email Copies</h1>
+  {% if response %}
+    <ul>
+      {% for copy in response %}
+        <li>{{ copy }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No email copies generated yet.</p>
+  {% endif %}
+</body>
+</html>

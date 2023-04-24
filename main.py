@@ -9,10 +9,12 @@ from flask_cors import CORS
 from google.cloud import secretmanager
 
 # Import custom modules
-import firestore_handler
-import openai_handler
-import openai_gpt_3_5_t_handler
-import anthropic_handler
+from src import (
+    firestore_handler,
+    openai_handler,
+    openai_gpt_3_5_t_handler,
+    anthropic_handler
+)
 
 # Create the Secret Manager client
 client = secretmanager.SecretManagerServiceClient()

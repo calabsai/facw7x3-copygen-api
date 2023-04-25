@@ -2,7 +2,11 @@
 
 import openai
 import time
-import datetime
+import logging
+
+# Set up logging
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 def generate_copy_with_retry(data, max_retries=3, delay_factor=2):
     retries = 0
@@ -12,28 +16,23 @@ def generate_copy_with_retry(data, max_retries=3, delay_factor=2):
         try:
             response = openai.ChatCompletion.create(**data)
             break
-        except openai.error.RateLimitError as e:
+        except (openai.error.RateLimitError, openai.error.APIConnectionError) as e:
             if retries < max_retries - 1:
                 sleep_time = delay_factor * (2 ** retries)
-                print(f"RateLimitError encountered. Retrying in {sleep_time} seconds...")
+                logger.info(f"Error encountered: {e}. Retrying in {sleep_time} seconds...")
                 time.sleep(sleep_time)
                 retries += 1
             else:
-                print("Max retries reached. Aborting.")
+                logger.error("Max retries reached. Aborting.")
                 raise e
     return response
 
-def generate_copy(system_role_prompt, context, prompt, model="gpt-4", openai_api_key=None):
-    # Ensure that the arguments are strings
-    if not isinstance(system_role_prompt, str) or not isinstance(context, str) or not isinstance(prompt, str):
-        print("Error: Arguments must be strings")
-        return "Error generating copy"
-
+def generate_copy(system_role_prompt, context, prompt, model="gpt-4", openai_api_key=None, max_retries=3, delay_factor=2):
     # Set the OpenAI API key
     openai.api_key = openai_api_key
 
     data = {
-        "model": model,  # Use the selected model
+        "model": model,
         "messages": [
             {"role": "system", "content": system_role_prompt},
             {"role": "user", "content": context},
@@ -45,13 +44,11 @@ def generate_copy(system_role_prompt, context, prompt, model="gpt-4", openai_api
     }
 
     try:
-        response = generate_copy_with_retry(data)
+        response = generate_copy_with_retry(data, max_retries=max_retries, delay_factor=delay_factor)
         if response and response.choices:
             generated_response = response.choices[0].message["content"]
             return generated_response.strip()
         return "Error generating copy"
     except Exception as e:
-        print(f"Error generating copy: {e}")
-        import traceback
-        traceback.print_exc()
-        return "Error generating copy"
+        logger.error(f"Error generating copy: {e}")
+        return f"Error generating copy: {str(e)}"

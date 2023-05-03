@@ -7,6 +7,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore, initialize_app
 from flask_cors import CORS
 from google.cloud import secretmanager
+from src.firestore_handler import add_carriage_returns_to_document_fields
 
 # Import custom modules
 from src import (
@@ -85,18 +86,40 @@ def generate():
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)})
+    try:  # Add this try block
+        # Generate copy using the appropriate language model handler
+        if language_model == "gpt-4":
+            generated_copy = openai_handler.generate_copy(system_role_prompt, context, prompt, openai_api_key=openai_api_key)    
+        elif language_model == "gpt-3.5-turbo":
+            generated_copy = openai_gpt_3_5_t_handler.generate_copy(system_role_prompt, context, prompt, openai_api_key=openai_api_key)
+        elif language_model == "claude-v1.3":
+            generated_copy = anthropic_handler.generate_copy(system_role_prompt, context, prompt, anthropic_api_key=anthropic_api_key)
+        else:
+            return jsonify({"error": "Invalid language model selected"})
 
-    # Generate copy using the appropriate language model handler
-    if language_model == "gpt-4":
-        generated_copy = openai_handler.generate_copy(system_role_prompt, context, prompt, openai_api_key=openai_api_key)    
-    elif language_model == "gpt-3.5-turbo":
-        generated_copy = openai_gpt_3_5_t_handler.generate_copy(system_role_prompt, context, prompt, openai_api_key=openai_api_key)
-    elif language_model == "claude-v1.3":
-        generated_copy = anthropic_handler.generate_copy(system_role_prompt, context, prompt, api_key=anthropic_api_key)
-    else:
-        return jsonify({"error": "Invalid language model selected"})
+    # Create a new document with the specified fields
+        user_data = {
+            "form_data": data,
+            "generated_copy": generated_copy,
+            "language_model": language_model,
+            "timestamp": firestore.SERVER_TIMESTAMP  # Use server timestamp
+        }
+        
+        # Save the document to Firestore
+        db.collection("user_data").add(user_data)
+        
+        return jsonify({"generated_copy": generated_copy})
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
-    return jsonify({"generated_copy": generated_copy})
+@app.route("/format_email_templates", methods=["POST"])
+def format_email_templates():
+    try:
+        # Call the function to add carriage returns to all field values of the "email_templates" document
+        add_carriage_returns_to_document_fields(db, 'prompts', 'email_templates')
+        return jsonify({"success": "Email templates formatted successfully"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 if __name__ == "__main__":
     host = os.environ.get("HOST", "0.0.0.0")

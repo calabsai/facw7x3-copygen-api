@@ -2,6 +2,10 @@
 
 import datetime
 from google.cloud import firestore
+import logging
+
+# Configure logging
+logging.basicConfig(filename='firestore_handler.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def store_responses(db, data):
     # Create a new document in the "responses" collection
@@ -20,19 +24,37 @@ def get_latest_responses(db):
     return responses
 
 def load_system_role_prompt(db):
-    # Retrieve the system role prompt from Firestore
-    doc_ref = db.collection("prompts").document("a7djMKpmCftCtBfb9UBP")
-    doc = doc_ref.get()
-    return doc.get("ai_role_direct_response_email_copywriter")
+    try:
+        # Retrieve the system role prompt from Firestore
+        doc_ref = db.collection("system_roles").document("email_copywriter")
+        doc = doc_ref.get()
+        
+        # Print and log the retrieved document
+        print("Retrieved document:", doc.to_dict())
+        logging.info("Retrieved document: %s", doc.to_dict())
+        
+        # Extract the field value (replace "correct_field_name" with the actual field name)
+        field_value = doc.get("systemRoleEmailCopywriterV2_20230502")
+        
+        # Print and log the extracted field value
+        print("Field value:", field_value)
+        logging.info("Field value: %s", field_value)
+        
+        return field_value
+    except Exception as e:
+        # Print and log any exceptions that occur
+        print("Error:", e)
+        logging.error("Error: %s", e)
+        return None
 
 def load_email_prompt(db, selected_template):
     # Retrieve the corresponding email prompt from Firestore based on the selected template
-    doc_ref = db.collection("prompts").document("TapKYDTAtPgcpGM66YWE")
+    doc_ref = db.collection("prompts").document("email_templates")
     doc = doc_ref.get()
     field_name = {
-        "email-template-1": "email001_unique_solution",
-        "email-template-2": "email002_emotional_impact",
-        "email-template-3": "email003_negatively_perceived_item"
+        "email-template-1": "email001UniqueSolutionV1_20230425",
+        "email-template-2": "email002EmotionalImpactV1_20230425",
+        "email-template-3": "email003NegativelyPerceivedItemV1_20230425"
     }.get(selected_template)
     return doc.get(field_name)
 
@@ -50,7 +72,31 @@ def create_context(data, system_role_prompt, selected_template):
     context = context.replace("<<Answer to question 6>>", data['credibility'])
 
     # Add the separator and the selected email template to the context
-    context += "\nHere's the template:\n"
-    context += selected_template + "\n"
+    context += "\nDo not include square brackets \"[\" or \"]\" or \"[\"weight loss gurus\"]\"in your response, simply show the text without the square brackets e.g. weight loss gurus. Use the following template to create the email:\n";
+    context += selected_template + "\n";
 
     return context
+
+def add_carriage_returns_to_document_fields(db, collection_name, document_name):
+    # Get a reference to the specified document
+    doc_ref = db.collection(collection_name).document(document_name)
+    
+    # Retrieve the document data
+    doc = doc_ref.get()
+    if not doc.exists:
+        print("Document not found.")
+        return
+    
+    # Get the document fields as a dictionary
+    doc_fields = doc.to_dict()
+    
+    # Iterate over each field value and add carriage returns
+    modified_fields = {}
+    for field_name, field_value in doc_fields.items():
+        if isinstance(field_value, str):
+            # Modify the field value by adding carriage returns (e.g., replace double spaces with '\n\n')
+            modified_field_value = field_value.replace('  ', '\n\n\n')
+            modified_fields[field_name] = modified_field_value
+    
+    # Update the fields in the document
+    doc_ref.update(modified_fields)

@@ -1,34 +1,18 @@
-# openai_gpt_3_5_t_handler.py, Path: backend/app/src/openai_gpt_3_5_t_handler.py
-
+# openai_gpt_3_5_t_handler.py, Path: facw7x3-copygen-api/src/openai_gpt_3_5_t_handler.py
 import openai
-import time
 import datetime
+from tenacity import retry, stop_after_attempt, wait_random_exponential
 
-def generate_copy_with_retry(data, max_retries=3, delay_factor=2):
-    retries = 0
-    response = None
-
-    while retries < max_retries:
-        try:
-            response = openai.ChatCompletion.create(**data)
-            break
-        except openai.error.RateLimitError as e:
-            if retries < max_retries - 1:
-                sleep_time = delay_factor * (2 ** retries)
-                print(f"RateLimitError encountered. Retrying in {sleep_time} seconds...")
-                time.sleep(sleep_time)
-                retries += 1
-            else:
-                print("Max retries reached. Aborting.")
-                raise e
-    return response
+@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(3))
+def generate_copy_with_retry(data):
+    return openai.ChatCompletion.create(**data)
 
 def generate_copy(system_role_prompt, context, prompt, model="gpt-3.5-turbo", openai_api_key=None):
     # Set the OpenAI API key
     openai.api_key = openai_api_key
 
     data = {
-        "model": model,  # Use the selected model
+        "model": model,
         "messages": [
             {"role": "system", "content": system_role_prompt},
             {"role": "user", "content": context},
@@ -47,6 +31,4 @@ def generate_copy(system_role_prompt, context, prompt, model="gpt-3.5-turbo", op
         return "Error generating copy"
     except Exception as e:
         print(f"Error generating copy: {e}")
-        import traceback
-        traceback.print_exc()
-        return "Error generating copy"
+        return f"Error generating copy: {str(e)}"

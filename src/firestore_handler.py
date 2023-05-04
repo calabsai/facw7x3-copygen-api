@@ -72,7 +72,7 @@ def create_context(data, system_role_prompt, selected_template):
     context = context.replace("<<Answer to question 6>>", data['credibility'])
 
     # Add the separator and the selected email template to the context
-    context += "\nDo not include square brackets \"[\" or \"]\" or \"[\"weight loss gurus\"]\"in your response, simply show the text without the square brackets e.g. weight loss gurus. Use the following template to create the email:\n";
+    context += "\nDo not include any unnecessary greetings or explanations. Simply generate the copy. Note: Replace the placeholders in square brackets with appropriate text. Use the following template to create the email:\n";
     context += selected_template + "\n";
 
     return context

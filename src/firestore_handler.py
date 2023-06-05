@@ -54,7 +54,35 @@ def load_email_prompt(db, selected_template):
     field_name = {
         "email-template-1": "email001UniqueSolutionV1_20230425",
         "email-template-2": "email002EmotionalImpactV1_20230425",
-        "email-template-3": "email003NegativelyPerceivedItemV1_20230425"
+        "email-template-3": "email003NegativelyPerceivedItemV1_20230425",
+        "email-template-4": "email004PASUniqueSolutionEliminatesV1_20230606",
+        "email-template-5": "email005PASEliminateCommonProblemV1_20230606",
+        "email-template-6": "email006PASWhatTheHellV1_20230606",
+        "email-template-7": "email007PASSolveJointPainV1_20230606",
+        "email-template-8": "email008DBCUniqueSolutionFocusV1_20230606",
+        "email-template-9": "email009DBCTheProblemApocalypseV1_20230606",
+        "email-template-10": "email010DBCUniqueMysteriousHackV1_20230606",
+        "email-template-11": "email011DBCSolveStubbornProblemV1_20230606",
+        "email-template-12": "email012DBCSolveStubbornProblemShortV1_20230606",
+        "email-template-13": "email013NightmareFrustrationEmotionalImpactV1_20230606",
+        "email-template-14": "email014NightmareFrustratingSelf-EsteemV1_20230606",
+        "email-template-15": "email015DreamAchieveDesiredOutcomeEasyV1_20230606",
+        "email-template-16": "email016DreamAchieveDesiredOutcomeV1_20230606",
+        "email-template-17": "email017QuizSolutionSolutionsPositiveOutcomeV1_20230606",
+        "email-template-18": "email018QuizSolutionDiscoverShortcutFixV1_20230606",
+        "email-template-19": "email019QuizProblemResearchProblemPreventionV1_20230606",
+        "email-template-20": "email020QuizProblemFixProblemSolutionV1_20230606",
+        "email-template-21": "email021SelfTestTestSpecificGoalV1_20230606",
+        "email-template-22": "email022SelfTestShockinglyContrarianTestV1_20230606",
+        "email-template-23": "email023SelfTestResearchMistakeFixingV1_20230606",
+        "email-template-24": "email024ProofCredibleSrcAchieveDesiredOutcomeV1_20230606",
+        "email-template-25": "email025ProofCredibleSrcBreakthroughPromisingYearsV1_20230606",
+        "email-template-26": "email026ProofSuccStorySolveFrustrationRapidlyV1_20230606",
+        "email-template-27": "email027ContrarianGoodStopUsingCommonSolutionV1_20230606",
+        "email-template-28": "email028ContrarianGoodStopStruggling.V1_20230606",
+        "email-template-29": "email029ContrarianBadAchieveDesiredOutcomeSuperlativelyV1_20230606",
+        "email-template-30": "email030ContrarianBadAchieveDesiredOutcomeEnjoyingGuiltyPleasureV1_20230606"
+
     }.get(selected_template)
     return doc.get(field_name)
 

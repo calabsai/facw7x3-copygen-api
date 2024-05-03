@@ -89,7 +89,7 @@ sortedcontainers==2.4.0
 SQLAlchemy==2.0.11
 tenacity==8.2.2
 toml==0.10.2
-tqdm==4.65.0
+tqdm==4.66.3
 trio==0.22.0
 typing-inspect==0.8.0
 typing_extensions==4.5.0
